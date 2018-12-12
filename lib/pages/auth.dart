@@ -17,48 +17,65 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
-      body: Column(
-        children: <Widget>[
-          TextField(
-            decoration: InputDecoration(labelText: 'Username'),
-            onChanged: (value) {
-              setState(() {
-                _userNameValue = value;
-              });
-            },
+        appBar: AppBar(
+          title: Text('Login'),
+        ),
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/background.jpg'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.5), BlendMode.dstATop))),
+          margin: EdgeInsets.all(10.0),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(
+                      labelText: 'E-mail',
+                      filled: true,
+                      fillColor: Colors.white),
+                  onChanged: (value) {
+                    setState(() {
+                      _userNameValue = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 10.0,),
+                TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      labelText: 'Password',
+                      filled: true,
+                      fillColor: Colors.white),
+                  onChanged: (value) {
+                    setState(() {
+                      _passwordValue = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  value: _acceptTerms,
+                  title: Text('Accept terms'),
+                  onChanged: (bool value) {
+                    setState(() {
+                      _acceptTerms = value;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                RaisedButton(
+                  child: Text('LOGIN'),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/');
+                  },
+                )
+              ]),
+            ),
           ),
-          TextField(
-            obscureText: true,
-            decoration: InputDecoration(labelText: 'Password'),
-            onChanged: (value) {
-              setState(() {
-                _passwordValue = value;
-              });
-            },
-          ),
-          SwitchListTile(
-            value: _acceptTerms,
-            title: Text('Accept terms'),
-            onChanged: (bool value) {
-              setState(() {
-                _acceptTerms = value;
-              });
-            },
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          RaisedButton(
-            child: Text('LOGIN'),
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/');
-            },
-          )
-        ],
-      ),
-    );
+        ));
   }
 }

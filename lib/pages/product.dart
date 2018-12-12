@@ -3,64 +3,65 @@ import 'dart:async';
 import '../product_manager.dart';
 
 class ProductPage extends StatelessWidget {
-  final String title;
-  final String imageUrl;
+  final Map<String, dynamic> product;
 
-  ProductPage(this.title, this.imageUrl);
-
-  _showWarningDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Are you sure'),
-            content: Text('This action cannot be undone'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('DISCARD'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              FlatButton(
-                  child: Text('CONTINUE'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context, true);
-                  }),
-            ],
-          );
-        });
-  }
+  ProductPage(this.product);
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        print('Back button press');
         Navigator.pop(context, false);
         return Future.value(false);
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(product['title']),
         ),
         body: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset(imageUrl),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              child: Text(title),
+            Image.asset(product['image']),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  width: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    product['title'],
+                    style: TextStyle(fontSize: 30, fontFamily: 'Oswald'),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).accentColor,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    "\$${product['price'].toString()}",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+              ],
             ),
             Container(
-              padding: EdgeInsets.all(10.0),
-              child: RaisedButton(
-                color: Theme.of(context).accentColor,
-                child: Text('DELETE'),
-                onPressed: () => _showWarningDialog(context),
+              child: Text(
+                product['description'],
+                style: TextStyle(fontSize: 20),
               ),
+              margin: EdgeInsets.all(10),
+            ),
+            RaisedButton(
+              color: Theme.of(context).accentColor,
+              child: Text('Delete'),
+              onPressed: () {},
             )
           ],
         ),

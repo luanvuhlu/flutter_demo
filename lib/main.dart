@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       // debugShowMaterialGrid: true,
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,
-        accentColor: Colors.deepPurple,
+        accentColor: Colors.deepPurpleAccent,
         // fontFamily: 'Oswald'
         // brightness: Brightness.dark
       ),
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
             ProductsPage(_products),
         '/login': (BuildContext context) => AuthPage(),
         '/admin': (BuildContext context) =>
-            ProductAdminPage(_addProduct, _deleteProduct),
+            ProductAdminPage(_products, _addProduct, _deleteProduct),
       },
       onGenerateRoute: (RouteSettings settings) {
         print(settings);
@@ -63,7 +63,7 @@ class _MyAppState extends State<MyApp> {
           final int index = int.parse(pathElements[2]);
           return MaterialPageRoute<bool>(
               builder: (BuildContext context) => ProductPage(
-                  _products[index]['title'], _products[index]['image']));
+                  _products[index]));
         }
         return null;
       },
