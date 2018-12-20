@@ -1,88 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+
+import './product_edit.dart';
 
 class ProductListPage extends StatelessWidget {
   final List<Map<String, dynamic>> products;
+  final Function updateProduct;
+  final Function deleteProduct;
 
-  ProductListPage(this.products);
-
-  Widget _itemBuilder(BuildContext context, int index) {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Image.asset(products[index]['image']),
-          Container(
-            padding: EdgeInsets.only(top: 10.0),
-            // padding: EdgeInsets.only(top: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  products[index]['title'],
-                  style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Oswald'),
-                ),
-                SizedBox(
-                  width: 8.0,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).accentColor,
-                      borderRadius: BorderRadius.circular(5.0)),
-                  child: Text(
-                    "\$${products[index]['price'].toString()}",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(6.0)),
-            padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
-            margin: EdgeInsets.only(top: 6.0),
-            child: Text(
-              'Union Square Francisco',
-            ),
-          ),
-          ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.info),
-                iconSize: 30.0,
-                color: Theme.of(context).accentColor,
-                // child: Text('Details'),
-                onPressed: () => Navigator.pushNamed<bool>(
-                    context, '/product/' + index.toString()),
-              ),
-              IconButton(
-                icon: Icon(Icons.favorite_border),
-                iconSize: 30.0,
-                color: Colors.red,
-                // child: Text('Details'),
-                onPressed: () => Navigator.pushNamed<bool>(
-                    context, '/product/' + index.toString()),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
+  ProductListPage(this.products, this.updateProduct, this.deleteProduct);
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: _itemBuilder,
-      itemCount: products.length,
+    return Container(
+      child: ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return Dismissible(
+            key: Key(products[index]['title']),
+            background: Container(
+              color: Colors.red,
+            ),
+            secondaryBackground: Container(color: Colors.purple),
+            onDismissed: (DismissDirection direction) {
+              if (direction == DismissDirection.endToStart) {
+                deleteProduct(index);
+                print('swipe end to start');
+              } else if (direction == DismissDirection.startToEnd) {
+                print('swipe start to end');
+              }
+            },
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: AssetImage(
+                      products[index]['image'],
+                    ),
+                  ),
+                  title: Text(products[index]['title']),
+                  subtitle: Text("\$${products[index]['price']}"),
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return ProductEditPage(
+                          product: products[index],
+                          updateProduct: updateProduct,
+                          productIndex: index,
+                        );
+                      }));
+                    },
+                  ),
+                ),
+                Divider()
+              ],
+            ),
+          );
+        },
+        itemCount: products.length,
+      ),
     );
-    // (child: Text('Product lists'),);
   }
 }

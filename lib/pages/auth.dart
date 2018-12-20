@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import './products.dart';
-
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -10,72 +8,124 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  String _userNameValue;
-  String _passwordValue;
-  bool _acceptTerms = false;
+  final Map<String, dynamic> _formData = {
+    'email': '',
+    'password': '',
+    'acceptTerms': false
+  };
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  DecorationImage _buildBackgroundImage() {
+    return DecorationImage(
+      fit: BoxFit.cover,
+      colorFilter:
+          ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.dstATop),
+      image: AssetImage('assets/background.jpg'),
+    );
+  }
+
+  Widget _buildEmailTextField() {
+    return TextFormField(
+      decoration: InputDecoration(
+          labelText: 'E-Mail', filled: true, fillColor: Colors.white),
+      keyboardType: TextInputType.emailAddress,
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Email is required";
+        }
+        if (!RegExp(
+                r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+            .hasMatch(value)) {
+          return "Email not valid";
+        }
+      },
+      onSaved: (String value) {
+        _formData['email'] = value;
+      },
+    );
+  }
+
+  Widget _buildPasswordTextField() {
+    return TextFormField(
+      decoration: InputDecoration(
+          labelText: 'Password', filled: true, fillColor: Colors.white),
+      obscureText: true,
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Password is required";
+        }
+        if (value.length < 8) {
+          return "Password is too short";
+        }
+      },
+      onSaved: (String value) {
+        _formData['password'] = value;
+      },
+    );
+  }
+
+  Widget _buildAcceptSwitch() {
+    return SwitchListTile(
+      value: _formData['acceptTerms'],
+      onChanged: (bool value) {
+        setState(() {
+          _formData['acceptTerms'] = value;
+        });
+      },
+      title: Text('Accept Terms'),
+    );
+  }
+
+  void _submitForm() {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    Navigator.pushReplacementNamed(context, '/products');
+  }
 
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Login'),
+      appBar: AppBar(
+        title: Text('Login'),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: _buildBackgroundImage(),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/background.jpg'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                      Colors.black.withOpacity(0.5), BlendMode.dstATop))),
-          margin: EdgeInsets.all(10.0),
+        padding: EdgeInsets.all(10.0),
+        child: Form(
+          key: _formKey,
           child: Center(
             child: SingleChildScrollView(
-              child: Column(children: <Widget>[
-                TextField(
-                  decoration: InputDecoration(
-                      labelText: 'E-mail',
-                      filled: true,
-                      fillColor: Colors.white),
-                  onChanged: (value) {
-                    setState(() {
-                      _userNameValue = value;
-                    });
-                  },
+              child: Container(
+                width: targetWidth,
+                child: Column(
+                  children: <Widget>[
+                    _buildEmailTextField(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    _buildPasswordTextField(),
+                    _buildAcceptSwitch(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    RaisedButton(
+                      textColor: Colors.white,
+                      child: Text('LOGIN'),
+                      onPressed: _formData['acceptTerms'] ? _submitForm : null,
+                    ),
+                  ],
                 ),
-                SizedBox(height: 10.0,),
-                TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      labelText: 'Password',
-                      filled: true,
-                      fillColor: Colors.white),
-                  onChanged: (value) {
-                    setState(() {
-                      _passwordValue = value;
-                    });
-                  },
-                ),
-                SwitchListTile(
-                  value: _acceptTerms,
-                  title: Text('Accept terms'),
-                  onChanged: (bool value) {
-                    setState(() {
-                      _acceptTerms = value;
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                RaisedButton(
-                  child: Text('LOGIN'),
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/');
-                  },
-                )
-              ]),
+              ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

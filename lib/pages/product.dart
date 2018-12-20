@@ -1,67 +1,67 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-import '../product_manager.dart';
+
+import 'package:flutter/material.dart';
+
+import '../widgets/ui_elements/title_default.dart';
 
 class ProductPage extends StatelessWidget {
-  final Map<String, dynamic> product;
+  final String title;
+  final String imageUrl;
+  final double price;
+  final String description;
 
-  ProductPage(this.product);
+  ProductPage(this.title, this.imageUrl, this.price, this.description);
+
+  Widget _buildAddressPriceRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          'Union Square, San Francisco',
+          style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          child: Text(
+            '|',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+        Text(
+          '\$' + price.toString(),
+          style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+        )
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
+        print('Back button pressed!');
         Navigator.pop(context, false);
         return Future.value(false);
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(product['title']),
+          title: Text(title),
         ),
         body: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset(product['image']),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  width: 20,
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    product['title'],
-                    style: TextStyle(fontSize: 30, fontFamily: 'Oswald'),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).accentColor,
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "\$${product['price'].toString()}",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
-                ),
-              ],
-            ),
+            Image.asset(imageUrl),
             Container(
-              child: Text(
-                product['description'],
-                style: TextStyle(fontSize: 20),
-              ),
-              margin: EdgeInsets.all(10),
+              padding: EdgeInsets.all(10.0),
+              child: TitleDefault(title),
             ),
-            RaisedButton(
-              color: Theme.of(context).accentColor,
-              child: Text('Delete'),
-              onPressed: () {},
+            _buildAddressPriceRow(),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                description,
+                textAlign: TextAlign.center,
+              ),
             )
           ],
         ),
