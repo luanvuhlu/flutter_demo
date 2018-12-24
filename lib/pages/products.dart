@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/products/products.dart';
 import '../models/product.dart';
+import '../scoped-models/product.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Product> products;
-
-  ProductsPage(this.products);
+  ProductsPage();
 
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
@@ -35,13 +35,21 @@ class ProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('EasyList'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: () {},
+          ScopedModelDescendant<ProductModel>(
+            builder: (BuildContext context, Widget child, ProductModel model) {
+              final bool allFavorites = model.isAllFavorites();
+              return IconButton(
+                icon:
+                    Icon(allFavorites ? Icons.favorite : Icons.favorite_border),
+                onPressed: () {
+                  model.toggleAllProductFavoriteStatus(allFavorites);
+                },
+              );
+            },
           )
         ],
       ),
-      body: Products(products),
+      body: Products(),
     );
   }
 }
